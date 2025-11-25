@@ -1,0 +1,53 @@
+name: PulsePing CI
+
+on:
+  pull_request:
+    branches: [ dev, main ]
+
+jobs:
+
+  # ---------------- BACKEND CHECK ----------------
+  backend-check:
+    name: Backend (FastAPI) Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: FastAPI Import Test
+        run: |
+          python - << 'EOF'
+          import importlib
+          importlib.import_module("fastapi")
+          print("FastAPI Imported Successfully")
+          EOF
+
+  # ---------------- FRONTEND CHECK ----------------
+  frontend-check:
+    name: Frontend (Next.js) Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm install
